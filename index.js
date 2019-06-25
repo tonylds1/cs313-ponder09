@@ -1,15 +1,18 @@
 const express = require('express')
+var bodyParser = require('body-parser');
 const path = require('path')
 const PORT = process.env.PORT || 5000
 
 express()
   .use(express.static(path.join(__dirname, 'public')))
+  .use(bodyParser.json())
+  .use(bodyParser.urlencoded({ extended: true }))
   .set('views', path.join(__dirname, 'views'))
   .set('view engine', 'ejs')
   .get('/', (req, res) => res.render('pages/index'))
-  .get('/postage', (req, res) => {
-    const weight = +req.query.weight
-    const type = req.query.type
+  .post('/postage', (req, res) => {
+    const weight = +req.body.weight
+    const type = req.body.type
     const obj = { weight: weight, type: type, result: calculateRate(weight, type) }
 
     res.render('pages/postage', obj)
